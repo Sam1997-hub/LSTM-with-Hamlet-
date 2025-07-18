@@ -7,9 +7,11 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 model = load_model("next_word_converted.keras", compile=False)
 
-# Load tokenizer
-with open('tokenizer1.pickle', 'rb') as handle:
-    tokenizer = pickle.load(handle)
+import json
+from keras_preprocessing.text import tokenizer_from_json
+
+with open('tokenizer_config.json', 'r') as f:
+    tokenizer = tokenizer_from_json(json.load(f))
 
 # Predict the next word
 def predict_next_word(input_text):
