@@ -1,15 +1,14 @@
 import streamlit as st
 import numpy as np
-import pickle
+import json
 from tensorflow.keras.models import load_model
+from keras_preprocessing.text import tokenizer_from_json
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
+# Load the model (do NOT compile, avoids legacy issues)
+model = load_model('next_word_saved_model', compile=False)
 
-model = load_model("next_word_converted.keras", compile=False)
-
-import json
-from keras_preprocessing.text import tokenizer_from_json
-
+# Load tokenizer from JSON file
 with open('tokenizer_config.json', 'r') as f:
     tokenizer = tokenizer_from_json(json.load(f))
 
