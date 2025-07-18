@@ -8,10 +8,10 @@ from tensorflow.keras.preprocessing.sequence import pad_sequences
 # Load the model (do NOT compile, avoids legacy issues)
 model = load_model('next_word_saved_model', compile=False)
 
-# Load tokenizer from JSON file
 with open('tokenizer_config.json', 'r') as f:
-    tokenizer = tokenizer_from_json(json.load(f))
-
+    tokenizer_json = f.read()
+    tokenizer = tokenizer_from_json(tokenizer_json)
+    
 # Predict the next word
 def predict_next_word(input_text):
     max_sequence_len = model.input_shape[1]  # should match what you trained with
