@@ -13,30 +13,22 @@ with open('tokenizer_config.json', 'r') as f:
     tokenizer = tokenizer_from_json(tokenizer_json)
     
 # Predict the next word
-def predict_next_word(input_text):
-    max_sequence_len = model.input_shape[1]  # should match what you trained with
-
-    token_list = tokenizer.texts_to_sequences([input_text])[0]
-    token_list = pad_sequences([token_list], maxlen=max_sequence_len, padding='pre')
-
-    predicted_probs = model.predict(token_list, verbose=0)[0]
-    predicted_index = np.argmax(predicted_probs)
-    
-    # Get word from index
+def predict_next_word(model, tokenizer, text, max_sequence_len):
+    token_list = tokenizer.texts_to_sequences([text])[0]
+    if len(token_list) >= max_sequence_len:
+        token_list = token_list[-(max_sequence_len-1):]  # Ensure the sequence length matches max_sequence_len-1
+    token_list = pad_sequences([token_list], maxlen=max_sequence_len-1, padding='pre')
+    predicted = model.predict(token_list, verbose=0)
+    predicted_word_index = np.argmax(predicted, axis=1)
     for word, index in tokenizer.word_index.items():
-        if index == predicted_index:
+        if index == predicted_word_index:
             return word
-    return ""
+    return None
 
-# Streamlit UI
-st.title("Next Word Prediction (LSTM + Hamlet)")
-
-input_text = st.text_input("Enter a phrase:")
-
+# streamlit app
+st.title("Next Word Prediction With LSTM And Early Stopping")
+input_text=st.text_input("Enter the sequence of Words","To be or not to")
 if st.button("Predict Next Word"):
-    if input_text.strip() == "":
-        st.warning("Please enter a phrase.")
-    else:
-        next_word = predict_next_word(input_text)
-        st.write(f"**Next word prediction:** `{next_word}`")
-
+    max_sequence_len = model.input_shape[1] + 1  # Retrieve the max sequence length from the model input shape
+    next_word = predict_next_word(model, tokenizer, input_text, max_sequence_len)
+    st.write(f'Next word: {next_word}')
