@@ -1,6 +1,7 @@
 import streamlit as st
 import numpy as np
 import json
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from keras_preprocessing.text import tokenizer_from_json
 from tensorflow.keras.preprocessing.sequence import pad_sequences
