@@ -12,15 +12,32 @@ with open('tokenizer_config.json', 'r') as f:
     tokenizer_json = f.read()
     tokenizer = tokenizer_from_json(tokenizer_json)
     
-def predict_next_word(model, tokenizer, text, max_sequence_len):
+ef predict_next_word(model, tokenizer, text, max_sequence_len):
+    # Tokenize input text
     token_list = tokenizer.texts_to_sequences([text])[0]
     if len(token_list) >= max_sequence_len:
         token_list = token_list[-(max_sequence_len - 1):]  # Keep last n tokens
     token_list = pad_sequences([token_list], maxlen=max_sequence_len - 1, padding='pre')
 
-    predicted = model.predict(token_list, verbose=0)
-    predicted_word_index = np.argmax(predicted, axis=1)[0]  # Get scalar value
+    # Use serving function for prediction
+    infer = model.signatures["serving_default"]
 
+    # Get input name (e.g., 'input_1')
+    input_name = list(infer.structured_input_signature[1].keys())[0]
+
+    # Convert token_list to tensor with correct dtype
+    input_tensor = tf.convert_to_tensor(token_list, dtype=tf.int32)  # Usually int32 for NLP models
+
+    # Run inference
+    outputs = infer(**{input_name: input_tensor})
+
+    # Extract prediction tensor
+    predicted = list(outputs.values())[0].numpy()
+
+    # Get predicted word index
+    predicted_word_index = np.argmax(predicted, axis=1)[0]
+
+    # Convert index to word
     for word, index in tokenizer.word_index.items():
         if index == predicted_word_index:
             return word
