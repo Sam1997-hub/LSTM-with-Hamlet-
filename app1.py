@@ -31,6 +31,6 @@ st.title("Next Word Prediction with LSTM")
 input_text = st.text_input("Enter a sequence of words:", "To be or not to")
 
 if st.button("Predict Next Word"):
-    max_sequence_len = model.input_shape[1] + 1  # FIXED line
+    max_sequence_len = 40  # FIXED line
     next_word = predict_next_word(model, tokenizer, input_text, max_sequence_len)
     st.write(f"**Next word:** `{next_word}`")
