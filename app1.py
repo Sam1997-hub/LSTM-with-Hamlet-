@@ -4,8 +4,8 @@ import pickle
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
-# Load model (saved with model.export)
-model = load_model('next_word_saved_model', compile=False)
+
+model = load_model("next_word_converted.keras", compile=False)
 
 # Load tokenizer
 with open('tokenizer1.pickle', 'rb') as handle:
