@@ -12,7 +12,7 @@ with open('tokenizer_config.json', 'r') as f:
     tokenizer_json = f.read()
     tokenizer = tokenizer_from_json(tokenizer_json)
     
-ef predict_next_word(model, tokenizer, text, max_sequence_len):
+def predict_next_word(model, tokenizer, text, max_sequence_len):
     # Tokenize input text
     token_list = tokenizer.texts_to_sequences([text])[0]
     if len(token_list) >= max_sequence_len:
